@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Data Structures Programs</title>
+</head>
+<body>
+<h2>Data Structures Lab Programs</h2>
+<h2> Table of contents </h2>
+<ol>
+<li> <a href="#tower">Tower of Hanoi</a> </li>
+<li> <a href = "#insert_sort">insertion sort</a> </li>
+<li> <a href = "#stack_a"> stack using arrays</a></li>
+<li> <a href = "#ipost">infix to postfix conversion </a></li>
+<li> <a href = "#ipre">infix to prefix conversion </a></li>
+<li><a href="#Queue_Using_Arrays">Queue using arrays </a></li>
+<li> <a href = "#llist">linked list </a></li>
+<li> <a href = "#stackll">stack using linked list</a> </li>
+<li> <a href = "#qll"> Queue using linked list</a></li>
+<li> <a href = "#scll">singly circular linked list</a> </li>
+<li> <a href = "#dll"> doubly linked list</a></li>
+<li><a href = "#cbt">create binary tree  </a></li>
+<li><a href = "#cdll"> circular doubly linked list </a></li>
+<li> <a href = "#bst">creation and traversal of binary search tree</a> </li>
+<li> <a href = "#thread">right in threaded binary tree</a> </li>
+<li> <a href = "#bdt_id">insertion and deletion of node in a binary search tree </a></li>
+<li> <a href = "#exptree"> Evaluation of postfix expression using a binary tree</a></li>
+</ol>
+<h3><a id = "tower">Tower of Hanoi</a></h3>
+<code>
+<pre>
+// program to simulate the tower of Hanoi problem.
+
+#include &lt;stdio.h&gt;
+
+int main(void) {
+	void tower(char src, char temp, char dst, int n);
+	int n;
+	scanf("%d", &n);
+	tower('a', 'b', 'c', n);
+	return 0;
+}
+
+void tower(char src, char temp, char dst, int n) {
+	if(n > 0) {
+		tower(src, dst, temp, n-1);
+		printf("move disk %d from %c to %c.\n", n, src, dst);
+		tower(temp, src, dst, n-1);
+	}
+}
+</pre>
+</code>
+<h3><a id="insert_sort">Insertion Sort</a></h3>
+<code>
+<pre>
+// insertion sort to sort an array of integers.
+
+#include &lt;stdio.h&gt;
+#define SIZE 100
+    
+    
+int main(void) {
+	void sort(int [], int);
+	int a[SIZE], n, i;
+	printf("Enter the number of numbers to sort: ");
+	scanf("%d", &n);
+	printf("Enter %d numbers to sort:\n", n);
+	for(i = 0; i < n; i++)
+		scanf("%d", &a[i]);
+	sort(a, n);
+	printf("sorted numbers:\n");
+	for(i = 0; i < n; i++)
+		printf("%d\n", a[i]);
+	return 0;
+}
+    
+
+void sort(int a[], int n) {
+	int i, j, k;
+	for(i = 1; i < n; i++) {
+		k = a[i];
+		for(j = i-1; j >= 0 && a[j] > k; j--)
+			a[j+1] = a[j];
+		a[j+1] = k;
+	}
+}
+</pre>
+</code><h3><a id = "stack_a">Stack using arrays</a></h3>
+<code>
+<pre>
+// stack using arrays
+    
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#define SIZE 100
+    
+int stack[SIZE], top = 0;
+    
+int main(void) {
+	int pop(void);
+	void push(int);
+	void display(void);
+	int ch, val;
+	while(1) {
+		printf("Enter option:\n1> push\n2> pop\n3> display\n4> terminate\n");
+		scanf("%d", &ch);
+		switch(ch) {
+			case 1: printf("Enter no. to push: "); scanf("%d", &val); push(val); break;
+			case 2: printf("Popped value: %d", pop()); break;
+			case 3: display(); break;
+			case 4: return 0;
+			default: printf("ERROR: Invalid option!\n");
+		}
+	}
+	return 0;
+}
+    
+void push(int x) {
+	if(top < SIZE)
+		stack[top++] = x;
+	else
+		printf("ERROR: Insufficient memory!\n");
+}	
+    
+int pop(void) {
+	if(top > 0
+		return stack[--top];
+	else {
+		printf("ERROR: Stack underflow!\n");
+		exit(1);
+	}
+}
+    
+void display(void) {
+	int i;
+	for(i = 0; i < top; i++)
+		printf("%d\n", stack[i]);
+	printf("\n");
+}
+</pre>
+</code><h3><a id = "ipost">Conversion of expression from Infix to postfix</a></h3>
+<code>
+<pre>
+// conversion of infix expression to postfix expression
+ 
+#include &lt;stdio.h&gt;
+#include &lt;ctype.h&gt;
+#include &lt;stdlib.h&gt;
+    
+#define SIZE 100
+#define TRUE 1
+#define FALSE 0
+
+int stack[SIZE], top = 0;
+    
+int main(void) {
+	int precedence(int a, int b);
+	int stacktop(void);
+	void push(int sym);
+	int pop(void);
+	int c, i = 0;
+	char postfix[SIZE];
+	printf("Enter the infix expression:\n");
+	while((c = getchar()) != '\n' && c != EOF) {
+		if(isalnum(c))
+			postfix[i++] = c;
+		else if(isgraph(c)) {
+			if(c != ')') {
+				while(precedence(stacktop(), c))
+					postfix[i++] = pop();
+				push(c);
+			}
+			else {
+				while(stacktop() != '(')
+					postfix[i++] = pop();
+				pop();
+			}
+		}
+	}
+	while(stacktop() != '#')
+		postfix[i++] = pop();
+	postfix[i] = '\0';
+	printf("Postfix expression is:\n%s\n", postfix);
+	return 0;
+}
+    
+
+int precedence(int a, int b) {
+	if(a == '(' || b == '(')
+		return FALSE;
+	else if(a == '#')
+		return FALSE;
+	if(a == '^' && b != '^')
+		return TRUE;
+	else if((a == '*' || a == '/') && (b != '^'))
+		return TRUE;
+	else if((a == '+' || a == '-') && (b == '+' || b == '-'))
+		return TRUE;
+	else
+		return FALSE;
+}
+    
+int stacktop(void) {
+	if(top == 0)
+		return '#';
+	else 
+		return stack[top-1];
+}
+
+int pop(void) {
+	if(top == 0) {
+		printf("Stack empty!\n");
+		exit(1);
+	}
+	else {
+		return stack[--top];
+	}
+}
+    
+void push(int a) {
+	if(top == SIZE) {
+		printf("Stack overflow!\n");
+		exit(2);		
+	}
+	else {
+		stack[top++] = a;
+	}
+}
+    
+</pre>
+</code><h3> <a id = "ipre">Conversion of expression from Infix to prefix</a></h3>
+<code>
+<pre>
+// infix to prefix
+    
+#include &lt;stdio.h&gt;
+#include &lt;ctype.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+    
+#define SIZE 100
+#define TRUE 1
+#define FALSE 0
+    
+int stack[SIZE], top = 0;
+    
+int main(void) {
+	int precedence(int a, int b);
+	int stacktop(void);
+	void push(int sym);
+	int pop(void);
+	void getstring(char *s);
+	void strRev(char * s);
+	int c, i = 0, j = 0;
+	char prefix[SIZE], infix[SIZE];
+	printf("Enter the infix expression:\n");
+	getstring(infix);
+	strRev(infix);
+	while(c = infix[j++]) {
+		if(isalnum(c))
+			prefix[i++] = c;
+		else if(isgraph(c)) {
+			if(c != '(') {
+				while(precedence(stacktop(), c))
+					prefix[i++] = pop();
+				push(c);
+			}
+			else {
+				while(stacktop() != ')')
+					prefix[i++] = pop();
+				pop();
+			}
+		}
+	}
+	while(stacktop() != '#')
+		prefix[i++] = pop();
+	prefix[i] = '\0';
+	strRev(prefix);
+	printf("Prefix expression is:\n%s\n", prefix);
+	return 0;
+}
+    
+
+int precedence(int a, int b) {
+	if(a == ')' || b == ')')
+		return FALSE;
+	else if(a == '#')
+		return FALSE;
+	if(a == '^')
+		return TRUE;
+	else if((a == '*' || a == '/') && (b == '+' || b == '-'))
+		return TRUE;
+	else
+		return FALSE;
+}
+    
+int stacktop(void) {
+	if(top == 0)
+		return '#';
+	else 
+		return stack[top-1];
+}
+    
+int pop(void) {
+	if(top == 0) {
+		printf("Stack empty!\n");
+		exit(1);
+	}
+	else {
+		return stack[--top];
+	}
+}
+    
+void push(int a) {
+	if(top == SIZE) {
+		printf("Stack overflow!\n");
+		exit(2);		
+	}
+	else {
+		stack[top++] = a;
+	}
+}
+    
+void getstring(char *s) {
+	int c;
+	while((c = getchar()) != '\n' && c != EOF) {
+		*s++ = c;
+	}
+	*s = '\0';
+}
+    
+void strRev(char *s) {
+	int i, len, temp;
+	for(i = 0, len = strlen(s)-1; i < len; i++, len--) {
+		temp = s[i];
+		s[i] = s[len];
+		s[len] = temp;
+	}
+}
+    
+</pre>
+</code><h3> <a id="Queue_Using_Arrays">Queue Using Arrays</a></h3>
+<code>
+<pre>
+// implementation of queue using arrays
+    
+#include &lt;stdio.h&gt;
+    
+#define SIZE 5
+    
+int queue[SIZE], front = 0, rear = 0;
+    
+int main(void) {
+	void insert_q(int);
+	void delete_q(void);
+	void display(void);
+	int op, val;
+	printf("Options:\n1> insert\n2> delete\n3> display\n4> terminate\n");
+	while(1) {
+		printf("Enter the option: ");
+		scanf("%d", &op);
+		switch(op) {
+			case 1: printf("Enter value to be inserted: "); scanf("%d", &val); insert_q(val); break;
+			case 2: delete_q(); break;
+			case 3: display(); break;
+			case 4: return 0;
+			default: printf("Invalid option!\n");
+		}
+	}
+}
+    
+void insert_q(int a) {
+	if(rear == SIZE)
+		printf("Queue full!\n");
+	else
+		queue[rear++] = a;	
+}
+    
+void delete_q(void) {
+	if(front == rear)
+		printf("Queue empty!\n");
+	else 
+		printf("Deleted %d\n", queue[front++]);
+}
+    
+void display(void) {
+	int i = front;
+	if(front == rear) 
+		printf("Queue empty!");
+	else
+		while(i < rear)
+			printf("%d ", queue[i++]);
+	printf("\n");
+}
+    
+</pre>
+</code><h3> <a id = "llist">Singly Linked List</a></h3>
+<code>
+<pre>
+/* C program to create a linked list and perform the operations:
+ * 1> insert front
+ * 2> insert at specified position
+ * 3> delete front
+ * 4> delete specified position
+ */
+ 
+ #include &lt;stdio.h&gt;
+ #include &lt;stdlib.h&gt;
+ 
+ typedef struct node {
+	 int info;
+	 struct node* link;
+ } Node;
+ 
+ int main(void) {
+	 Node * insert_front(Node *, int);
+	 Node * insert_pos(Node *, int, int);
+	 Node * delete_front(Node *);
+	 Node * delete_pos(Node *, int);
+	 void display(Node *);
+	 Node * first = NULL;
+	 int op, val, pos;
+	 printf("Options:\n1>insert front\n2>insert at position\n3>delete front\n4>delete position\n5>display\n6>terminate\n");
+	 while(1) {
+		 printf("Enter your option: ");
+		 scanf("%d", &op);
+		 switch(op) {
+			 case 1: printf("Enter value to insert: ");
+					 scanf("%d", &val);
+					 first = insert_front(first, val);
+					 break;
+			 case 2: printf("Enter value to insert: ");
+					 scanf("%d", &val);
+					 printf("Enter the position: ");
+					 scanf("%d", &pos);
+					 first = insert_pos(first, val, pos);
+					 break;
+			 case 3: first = delete_front(first); break;
+			 case 4: printf("Enter position of node to be deleted: ");
+					 scanf("%d", &pos);
+					 first = delete_pos(first, pos);
+					 break;
+			 case 5: display(first); break;
+			 case 6: return 0; break;
+		 }
+	 }	 
+ }
+ 
+ Node * insert_front(Node *first, int val) {
+	 Node * new_node = (Node *) malloc(sizeof(Node));
+	 if(new_node == NULL) {
+		 printf("Allocation Failed!\n");
+		 exit(1);
+	 }
+	 new_node->info = val;
+	 new_node->link = first;
+	 return new_node;
+ }
+ 
+ Node * insert_pos(Node * first, int val, int pos) {
+	 Node * new_node = (Node *)malloc(sizeof(Node)), *temp = first;
+	 int i;
+	 new_node->info = val;
+	 if(pos == 1) {
+		 new_node->link = first;
+		 return new_node;
+	 }
+	 else if(first != NULL) {
+		 for(i = 2; i < pos && temp->link != NULL; i++, temp = temp->link);
+		 if(i == pos) {
+			new_node->link = temp->link;
+			temp->link = new_node;
+		}
+		else {
+			printf("ERROR! Invalid position!\n");
+		}
+	}
+	 else
+		printf("ERROR: Insertion not possible!\n");
+	 return first;
+ }
+ 
+ Node * delete_front(Node * first) {
+	Node * temp;
+	if(first == NULL) {
+		printf("ERROR! List empty! deletion failed!\n");
+		return first;
+	}
+	else {
+		temp = first->link;
+		free(first);
+		return temp;
+	}
+ }
+ 
+ Node * delete_pos(Node *first, int pos) {
+	 Node * cur = first, *prev = NULL;
+	 int i;
+	 if(first != NULL) {
+		 for(i = 1; i < pos && cur->link != NULL; i++) {
+			 prev = cur;
+			 cur = cur->link;
+		 }
+		 if(i == pos) {
+			 if(prev != NULL) {
+				 prev->link = cur->link;
+				 free(cur);
+				 return first;
+			 }
+			 else {
+				 prev = cur->link;
+				 free(cur);
+				 return prev;
+			 }
+		 }
+		 else 
+			 printf("Invalid position!\n");
+	 }
+	 else
+		printf("Deletetion not possible!\n");
+	 return first;
+ }
+    
+
+void display(Node * first) {
+	while(first != NULL) {
+		printf("%d\n", first->info);
+		first = first->link;
+	}
+}
+    
+</pre>
+</code><h3><a id = "stackll">Stack using linked list</a></h3>
+<code>
+<pre>
+// stack using linked list
+// operations: push, pop, display
+// analogous operations: push - insert_front, pop - delete_front, display - display
+    
+    
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+    
+typedef struct node {
+	int info;
+	struct node * link;
+} Node;
+    
+int main(void) {
+	Node * push(Node * first, int);
+	Node * pop(Node * first);
+	void display(Node * first);
+	Node * first = NULL;
+	int ch, val;
+	printf("Options:\n1> push\n2> pop\n3> display\n4> terminate\n");
+	while(1) {
+		printf("Enter option: ");
+		scanf("%d", &ch);
+		switch(ch) {
+			case 1: printf("Enter no. to push: "); scanf("%d", &val); first = push(first, val); break;
+			case 2: first = pop(first); break;
+			case 3: display(first); break;
+			case 4: return 0;
+			default: printf("ERROR: Invalid option!\n");
+		}
+	}
+	return 0;
+}
+    
+Node * push(Node * first, int val) {
+	Node * new_node = (Node *)malloc(sizeof(Node));
+	if(new_node == NULL) {
+		printf("ALLOCATION FAILURE ERROR!\n");
+		exit(1);
+	}
+	new_node->info = val;
+	new_node->link = first;
+	return new_node;
+}
+    
+ Node * pop(Node * first) {
+	Node * temp;
+	if(first == NULL) {
+		printf("ERROR! List empty! deletion failed!\n");
+		return first;
+	}
+	else {
+		temp = first->link;
+		printf("Popped %d\n", first->info);
+		free(first);
+		return temp;
+	}
+ }
+ 
+ void display(Node * first) {
+	 if(first == NULL)
+		printf("List empty!\n");
+	else
+		while(first != NULL) {
+			printf("%d\n", first->info);
+			first = first->link;
+		}
+ }
+    
+</pre>
+</code><h3 id = "qll">Queue using linked list</h3>
+<code>
+<pre>
+// implementation of queue using linked list
+// operations on queue: insert (rear), delete(front)
+// analogous operations: insert_rear, delete_front
+    
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+    
+typedef struct node {
+	int info;
+	struct node* link;
+}Node;
+    
+int main(void) {
+	Node * insert_rear(Node *, int);
+	Node * delete_front(Node *);
+	void display(Node *);
+	Node * first = NULL;
+	int op, val;
+	printf("Options:\n1> insert\n2> delete\n3> display\n4> terminate\n");
+	while(1) {
+		printf("Enter the option: ");
+		scanf("%d", &op);
+		switch(op) {
+			case 1: printf("Enter value to be inserted: "); scanf("%d", &val); first = insert_rear(first, val); break;
+			case 2: first = delete_front(first); break;
+			case 3: display(first); break;
+			case 4: return 0;
+			default: printf("Invalid option!\n");
+		}
+	}
+}
+    
+Node * insert_rear(Node * first, int val) {
+	Node * new_node = (Node *) malloc(sizeof(Node)), *temp;
+	if(new_node == NULL) {
+		printf("ALLOCATION FAILURE ERROR!\n");
+		exit(1);
+	}
+	new_node->info = val;
+	if(first == NULL) {
+		new_node->link = NULL;
+		return new_node;
+	}
+	else {
+		temp = first;
+		while(temp->link !=  NULL)
+			temp = temp->link;
+		temp->link = new_node;
+		return first;
+	}
+}
+    
+Node * delete_front(Node * first) {
+	Node * temp;
+	if(first == NULL) {
+		printf("Queue empty! Deletion process failed!\n");
+		return first;
+	}
+	else {
+		temp = first->link;
+		printf("Deleted %d from queue.\n", first->info);
+		free(first);
+		return temp;
+	}
+}
+    
+void display(Node * first) {
+	if(first == NULL) {
+		printf("List Empty!\n");
+	}
+	else {
+		while(first != NULL) {
+			printf("%d\n", first->info);
+			first = first->link;
+		}
+	}
+}
+    
+</pre>
+</code><h3><a id = "scll">Singly Circular Linked List</a></h3>
+<code>
+<pre>
+// singly circular linked list
+// insert front, insert rear, delete front, delete rear, display
+    
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+    
+typedef struct node {
+	int info;
+	struct node * link;
+}Node;
+
+int main(void) {
+	Node * insert_front(Node *, int);
+	Node * insert_rear(Node *, int);
+	Node * delete_front(Node *);
+	Node * delete_rear(Node *);
+	void display(Node *);
+	Node * first = NULL;
+	int op, val, pos;
+	printf("Options:\n1>insert front\n2>insert rear\n3>delete front\n4>delete rear\n5>display\n6>terminate\n");
+	while(1) {
+	 printf("Enter your option: ");
+	 scanf("%d", &op);
+	 switch(op) {
+		 case 1: printf("Enter value to insert: ");
+				 scanf("%d", &val);
+				 first = insert_front(first, val);
+				 break;
+		 case 2: printf("Enter value to insert: ");
+				 scanf("%d", &val);
+				 first = insert_rear(first, val);
+				 break;
+		 case 3: first = delete_front(first); break;
+		 case 4: first = delete_rear(first);
+				 break;
+		 case 5: display(first); break;
+		 case 6: return 0; break;
+	 }
+	}	 
+}
+    
+Node * insert_front(Node * first, int val) {
+	Node * new_node = (Node *)malloc(sizeof(Node)), *temp = first;
+	new_node->info = val;
+	if(first == NULL)
+		new_node->link = new_node;
+		
+	else {
+		new_node->link = first;
+		while(temp->link != first)
+			temp = temp->link;
+		temp->link = new_node;
+	}
+	return new_node;
+}
+    
+Node * insert_rear(Node * first, int val) {
+	Node * new_node = (Node *)malloc(sizeof(Node)), *temp = first;
+	new_node->info = val;
+	if(first == NULL) {
+		new_node->link = new_node;
+		return new_node;
+	}
+	else {
+		new_node->link = first;
+		while(temp->link != first)
+			temp = temp->link;
+		temp->link = new_node;
+		return first;
+	}
+}
+    
+Node * delete_front(Node * first) {
+	Node * temp = first;
+	if(first == NULL) {
+		printf("List empty!\n");
+		return first;
+	}
+	else {
+		while(temp->link != first)
+			temp = temp->link;
+		if(temp == first) {		// only one node.
+			free(first);
+			return NULL;
+		}
+		else {
+			temp->link = first->link;
+			free(first);
+			return temp->link;
+		}
+	}
+}
+
+Node * delete_rear(Node * first) {
+	Node * temp = first, *prev = NULL;
+	if(first == NULL) {
+		printf("List empty!\n");
+		return NULL;
+	}
+	else {
+		while(temp->link != first) {
+			prev = temp;
+			temp = temp->link;
+		}
+		if(temp == first) {
+			free(first);
+			return NULL;
+		}
+		else {
+			prev->link = first;
+			free(temp);
+			return first;
+		}
+	}
+}
+    
+void display(Node * first) {
+	Node * temp = first;
+	if(first == NULL) 
+		printf("List empty!\n");
+	else 
+		do{
+			printf("%d\n", temp->info);
+			temp = temp->link;
+		}while(temp != first);
+}
+    
+</pre>
+</code><h3><a id = "dll">doubly linked list with delete and insert position</a></h3>
+<code>
+<pre>
+// doubly linked list
+// insert front, insert rear, delete front, delete rear
+    
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+    
+typedef struct node {
+	int info;
+	struct node *llink, *rlink;
+}Node;
+    
+int main(void) {
+	Node * insert_front(Node *, int);
+	Node * insert_rear(Node *, int);
+	Node * delete_front(Node *);
+	Node * delete_rear(Node *);
+	Node * insert_pos(Node *, int, int);
+	Node * delete_pos(Node *, int);
+	void display(Node *);
+	Node * first = NULL;
+	int op, val, pos;
+	printf("Options:\n1>insert front\n2>insert rear\n3>delete front\n4>delete rear\n5>insert position\n6>delete position\n7>display\n8>terminate\n");
+	while(1) {
+	 printf("Enter your option: ");
+	 scanf("%d", &op);
+	 switch(op) {
+		 case 1: printf("Enter value to insert: ");
+				 scanf("%d", &val);
+				 first = insert_front(first, val);
+				 break;
+		 case 2: printf("Enter value to insert: ");
+				 scanf("%d", &val);
+				 first = insert_rear(first, val);
+				 break;
+		 case 3: first = delete_front(first); break;
+		 case 4: first = delete_rear(first);
+				 break;
+		 case 5: printf("Enter value to insert: ");
+				 scanf("%d", &val);
+				 printf("Enter position: ");
+				 scanf("%d", &pos);
+				 first = insert_pos(first, val, pos); break;
+		 case 6: printf("Enter the postion to delete: ");
+				 scanf("%d", &pos);
+				 first = delete_pos(first, pos);
+				 break;
+		 case 7: display(first); break;
+		 case 8: return 0; break;
+	 }
+	}	 
+}
+    
+Node * insert_front(Node * first, int val) {
+	Node * new_node = (Node *)malloc(sizeof(Node));
+	if(new_node == NULL) {
+		printf("ERROR: Allocation Failure!\n");
+		exit(1);
+	}
+	new_node->info = val;
+	new_node->llink = NULL;
+	new_node->rlink = first;
+	return new_node;	
+}
+    
+Node * insert_rear(Node * first, int val) {
+	Node * new_node = (Node *)malloc(sizeof(Node)), *temp = first;
+	if(new_node == NULL) { 
+		printf("ERROR: Allocation Failure!\n");
+		exit(1);
+	}
+	new_node->info = val;
+	if(first == NULL) {
+		new_node->llink = new_node->rlink = NULL;
+		return new_node;
+	}
+	else {
+		temp = first;
+		while(temp->rlink != NULL)
+			temp = temp->rlink;
+		new_node->llink = temp;
+		temp->rlink = new_node;
+		new_node->rlink = NULL;
+		return first;
+	}
+}
+    
+Node * delete_front(Node * first) {
+	Node *temp;
+	if(first == NULL) {
+		printf("List Empty!\n");
+		return first;
+	}
+	else {
+		temp = first->rlink;
+		free(first);
+		return temp;
+	}
+}
+    
+Node * delete_rear(Node * first) {
+	Node * temp = first;
+	if(first == NULL) {
+		printf("List empty!\n");
+		return first;
+	}
+	else {
+		while(temp->rlink != NULL)
+			temp = temp->rlink;
+		if(temp == first) {
+			free(first);
+			return NULL;
+		}
+		else {
+			temp = temp->llink;
+			free(temp->rlink);
+			temp->rlink = NULL;
+			return first;
+		}
+	}
+}
+
+void display(Node * first) {
+	while(first != NULL) {
+		printf("%d\n", first->info);
+		first = first->rlink;
+	}
+}
+    
+Node * insert_pos(Node * first, int val, int pos) {
+	Node * new_node = (Node *)malloc(sizeof(Node)), *temp = first;
+	int i;
+	if(new_node == NULL) {
+		printf("ERROR: Allocation Failure!\n");
+		exit(1);
+	}
+	new_node->info = val;
+	if(pos == 1) {
+		new_node->llink = NULL;
+		new_node->rlink = first;
+		if(first != NULL)
+			first->llink = new_node;
+		return new_node;
+	}
+	else if(first != NULL) {
+		for(i = 2; i < pos && temp->rlink != NULL; i++, temp = temp->rlink);
+		if(i == pos) {
+			new_node->rlink = temp->rlink;
+			if(temp->rlink != NULL)
+				(temp->rlink)->llink = new_node;
+			new_node->llink = temp;
+			temp->rlink = new_node;
+			return first;
+		}
+	}
+	printf("invalid position!\n");
+	return first;
+}
+
+Node * delete_pos(Node * first, int pos) {
+	Node * temp = first;
+	int i;
+	if(first == NULL) 
+		printf("List empty!\n");
+	
+	else {
+		for(i = 1; i < pos && temp->rlink!= NULL; i++, temp = temp->rlink);
+		if(i == pos) {
+			if(temp->llink != NULL)
+				(temp->llink)->rlink = temp->rlink;
+			if(temp->rlink != NULL)
+				(temp->rlink)->llink = temp->llink;
+			if(temp == first) {
+				free(temp);
+				return first->rlink;
+			}
+			else {
+				free(temp);
+				return first;
+			}
+		}
+		else
+			printf("Invalid position!\n");
+	}
+	return first;
+} 
+
+</pre>
+</code><h3><a id = "cbt">Create a binary tree</a></h3>
+<code>
+<pre>
+    // program to create a binary tree
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+typedef struct node {
+	int info;
+	struct node *left, *right;
+}Node;
+
+int main(void) {
+	void delete(Node * root);
+	Node * create(void);
+	void inorder(Node *);
+	Node * root = NULL;
+	root = create();
+	inorder(root);
+	return 0;
+}
+
+Node * create(void) {
+	int ch;
+	Node * root = (Node *)malloc(sizeof(Node));
+	if(root == NULL) {
+		printf("ALLOCATION FAILURE!\n");
+		exit(1);
+	}
+	printf("Enter value of node: ");
+	scanf("%d", &(root->info));
+	printf("Do you want to create a left child for %d? (1/0)\n", root->info);
+	scanf("%d", &ch);
+	if(ch)
+		root->left = create();
+	else
+		root->left = NULL;
+	printf("Do you want to create a right child for %d? (1/0)\n", root->info);
+	scanf("%d", &ch);
+	if(ch)
+		root->right = create();
+	else
+		root->right = NULL;
+	return root;
+}
+
+void inorder(Node * root) {
+	if(root != NULL) {
+		inorder(root->left);
+		printf("%d\n", root->info);
+		inorder(root->right); 
+	}
+}
+
+</pre>
+</code><h3><a id = "cdll">Circular Doubly linked list</a></h3>
+<code>
+<pre>
+    // circular doubly linked list
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+typedef struct node {
+	int info;
+	struct node * rlink, *llink;
+} Node;
+
+int main(void) {
+	Node * insert_front(Node * first, int v);
+	Node * insert_rear(Node * first, int val);
+	Node * delete_front(Node * first);
+	Node * delete_rear(Node * first);
+	Node * insert_pos(Node * first, int val, int pos);
+	Node * delete_pos(Node * first, int pos); 
+	void display(Node* first);
+	Node * first = NULL;
+	int ch, val, pos;
+	while(1) {
+		printf("Enter your option:\n1> Insert Front.\n2> Insert rear\n3> Delete Front\n4> Delete Rear\n5> Display\n6> Terminate Program.\n7> Insert Position\n8> Delete Postion\n");
+		scanf("%d", &ch);
+		switch(ch) {
+			case 1: printf("Enter value to be inserted front: ");
+					scanf("%d", &val);
+					first = insert_front(first, val);
+					break;
+			case 2: printf("Enter value to be inserted rear: ");
+					scanf("%d", &val);
+					first = insert_rear(first, val);
+					break;
+			case 3: first = delete_front(first); break;
+			case 4: first = delete_rear(first); break;
+			case 5: display(first); break;
+			case 6: printf("Program Terminating...\nGood bye!\n"); return 0; break;
+			case 7: printf("Enter the value to be inserted: ");
+					scanf("%d", &val);
+					printf("Enter the postion: ");
+					scanf("%d", &pos);
+					first = insert_pos(first, val, pos);
+					break;
+			case 8: printf("Enter the position to be deleted: ");
+					scanf("%d", &pos);
+					first = delete_pos(first, pos);
+					break;
+			default : printf("Invalid Input!\n");
+		}
+	}
+	return 0;
+}
+
+Node * insert_front(Node * first, int v) {
+	Node* new_node = (Node*) malloc(sizeof(Node));
+	new_node->info = v;
+	if(first == NULL) {
+		new_node->rlink = new_node;
+		new_node->llink = new_node;
+	}
+	else {
+		new_node->rlink = first;
+		new_node->llink = first->llink;
+		(first->llink)->rlink = new_node;
+		first->llink = new_node;
+	}
+	return new_node;
+}
+
+Node * insert_rear(Node * first, int v) {
+	Node* new_node = (Node*) malloc(sizeof(Node));
+	new_node->info = v;
+	if(first == NULL) {
+		new_node->rlink = new_node->llink = new_node;
+	}
+	else {
+		new_node->rlink = first;
+		new_node->llink = first->llink;
+		(first->llink)->rlink = new_node;
+		first->llink = new_node;
+	}
+	return new_node->rlink;
+}
+
+Node * delete_front(Node * first) {
+	Node * temp = first;
+	if(first == NULL){
+		printf("ERROR: List Empty! Deletion Failed.\n");
+		return first;
+	}	
+	else if(first->rlink == NULL){
+		free(first);
+		return NULL;
+	}
+	else {
+		(first->llink)->rlink = first->rlink;
+		(first->rlink)->llink = first->llink;
+		first = first->rlink;
+		free(temp);
+		return first;
+	}
+}
+
+Node * delete_rear(Node * first) {
+	Node * temp = first;
+	if(first == NULL){
+		printf("ERROR: List Empty! Deletion Failed.\n");
+		return first;
+	}	
+	else if(first->rlink == NULL){
+		free(first);
+		return NULL;
+	}
+	else {
+		first = first->llink;
+		(first->llink)->rlink = first->rlink;
+		(first->rlink)->llink = first->llink;
+		free(first);
+		return temp;
+	}
+}
+
+void display(Node * first) {
+	Node* temp = first;
+	do {
+		printf("%d\t", first->info);
+		first = first->rlink;
+	}while(first != temp);	
+	printf("\n");
+}
+
+
+
+
+Node * insert_pos(Node* first, int val, int pos) {
+	Node * new_node = (Node *) malloc(sizeof(Node)), *temp = first;
+	int i;
+	new_node->info = val;
+	new_node->rlink = new_node->llink = new_node;
+	if(first == NULL)
+		return new_node;
+	else if(pos <= 1) {
+		new_node->rlink = first;
+		new_node->llink = first->llink;
+		(first->llink)->rlink = new_node;
+		first->llink = new_node;
+		return new_node;
+	}	
+	else {
+		for(i = 2; i < pos; i++) 
+			temp = temp->rlink;
+		new_node->llink = temp;
+		new_node->rlink = temp->rlink;
+		(temp->rlink)->llink = new_node;
+		temp->rlink = new_node;
+		return first;
+	}
+}
+
+
+Node * delete_pos(Node * first, int pos) {
+	Node * temp = first;
+	int i;
+	if(first == NULL) {
+		printf("ERROR: List Empty! Deletion Failed.\n");
+		return first;
+	}
+	else {
+		for(i = 1; i < pos && temp->rlink != first; i++, temp = temp->rlink);
+		if(pos == i) {
+			if(temp->rlink != temp) {				// if the no. of elements is more than 1
+				(temp->rlink)->llink = temp->llink;
+				(temp->llink)->rlink = temp->rlink;
+				if(temp == first) {					// if the node to be deleted is first node itself.
+					free(temp);
+					return first->rlink;
+				}
+				else {
+					free(temp);
+					return first;
+				}
+			}
+			else {
+				free(temp);
+				return NULL;
+			}
+		}
+		else {
+			printf("ERROR: Invalid position!\n");
+			return first;
+		}
+	}
+}
+
+</pre>
+</code><h3><a id = "bst">Create a binary search tree and Tree Traversal (Inorder, preorder and postorder)</a></h3>
+<code>
+<pre>
+    // program to create a binary tree
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+typedef struct node {
+	int info;
+	struct node *left, *right;
+}Node;
+
+int main(void) {
+	Node * create(Node * root, int val);
+	void inorder(Node *);
+	void preorder(Node *);
+	void postorder(Node *);
+	Node * root = NULL;
+	int t, val;
+	do {
+		printf("Enter value: ");
+		scanf("%d", &val);
+		root = create(root, val);
+		printf("Continue?(1/0)\n");
+		scanf("%d", &t);
+	}while(t);
+	printf("Preorder traversal: \n");
+	preorder(root);
+	printf("Inorder traversal: \n");
+	inorder(root);
+	printf("Postorder traversal: \n");
+	postorder(root);
+	return 0;
+}
+
+Node * create(Node * root, int val) {
+	if(root == NULL) {
+		Node * new_node = (Node *)malloc(sizeof(Node));
+		if(new_node == NULL) {
+			printf("ALLOCATION FAILURE!\n");
+			exit(1);
+		}
+		new_node->info = val;
+		new_node->right = new_node->left = NULL;
+		return new_node;
+	}
+	else if(val < root->info) 
+		root->left = create(root->left, val);
+	else 
+		root->right = create(root->right, val);
+	return root;
+}
+
+void inorder(Node * root) {
+	if(root != NULL) {
+		inorder(root->left);
+		printf("%d\n", root->info);
+		inorder(root->right); 
+	}
+}
+
+void preorder(Node * root) {
+	if(root != NULL) {
+		printf("%d\n", root->info);
+		preorder(root->left);
+		preorder(root->right);
+	}
+}
+
+void postorder(Node * root) {
+	if(root != NULL) {
+		postorder(root->left);
+		postorder(root->right);
+		printf("%d\n", root->info);
+	}
+}
+
+</pre>
+</code><h3><a id = "thread">Right In threaded Binary tree</a></h3>
+<code>
+<pre>
+    // binary right in threaded tree
+// insertion and traversal
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+#define TRUE 1
+#define FALSE 0
+
+typedef struct node {
+	int info, rthread;
+	struct node *left, *right;
+}Node;
+
+int main(void) {
+	Node * create(Node *, int);
+	void traverse(Node *);
+	int op, val, n, i;
+	Node * root = NULL;
+	printf("Options:\n1>Create tree\n2>Display\n3>Terminate\n");
+	while(1) {
+		printf("Enter option: ");
+		scanf("%d", &op);
+		switch(op) {
+			case 1: printf("Enter no. of values: ");
+					scanf("%d", &n);
+					printf("Enter %d values:\n", n);
+					for(i = 0; i < n; i++) {
+						scanf("%d", &val);
+						root = create(root, val);
+					}
+					break;
+			case 2: printf("Inorder traversal:\n");
+					traverse(root);
+					break;
+			case 3: return 0; break;
+			default: printf("Invalid option!\n");
+		}
+	}
+}
+
+Node * create(Node * root, int val) {
+	Node * p, * q, *new_node = (Node *)malloc(sizeof(Node));
+	int thread;
+	new_node->info = val;
+	new_node->left = new_node->right = NULL;
+	new_node->rthread = TRUE;
+	if(root == NULL) {
+		return new_node;
+	}
+	else {
+		p = root;
+		q = NULL;
+		thread = TRUE;
+		while(p != NULL && thread) {
+			q = p;
+
+			if(val < p->info)
+				p = p->left;
+			else {
+				p = p->right;
+				thread = !q->rthread;
+			}
+		}
+		if(q != NULL && val < q->info) {
+			q->left = new_node;
+			new_node->right = q;
+		}
+		else if(q != NULL) {
+			new_node->right = q->right;
+			q->right = new_node;
+			q->rthread = FALSE;
+		}
+	}
+	return root;
+}
+
+void traverse(Node * root) {
+	Node * p = root, *q;
+	do {
+		q = NULL;
+		while(p != NULL) {
+			q = p;
+			p = p->left;
+		}
+		if (q != NULL) {
+			printf("%d\n", q->info);
+			p = q->right;
+			while(p != NULL && q->rthread) {
+				printf("%d\n", p->info);
+				q = p;
+				p = p->right;
+			}
+		}
+	}while(q != NULL);
+}
+
+</pre>
+</code><h3><a id = "bdt_id">Insertion and deletion of node in binary search tree</a></h3>
+<code>
+<pre>
+    
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+typedef struct node {
+	int info;
+	struct node * right, * left;
+}Node;
+
+Node * insert(Node * root, int val) {
+	if(root == NULL) {
+		root = (Node *) malloc(sizeof(Node));
+		root->info = val;
+		root->right = root->left = NULL;
+	}
+	else if(val < root->info) 
+		root->left = insert(root->left, val);
+	else
+		root->right = insert(root->right, val);
+	return root;
+}
+
+void inorder(Node * root) {
+	if(root != NULL) {
+		inorder(root->left);
+		printf("%d\n", root->info);
+		inorder(root->right); 
+	}
+}
+
+Node * delete_node(Node * root, int val) {
+	Node * temp = NULL;
+	if(root != NULL) {
+		if(root->info == val) {
+			if(root->right == NULL && root->left == NULL) 
+				temp = NULL;
+			else if(root->left == NULL) 
+				temp = root->right;
+			else if(root->right == NULL) 
+				temp = root->left;
+			else {
+				temp = root->right;
+				while(temp->left != NULL)
+					temp = temp->left;
+				temp->left = root->left;
+				temp = root->right;
+			}
+			free(root);
+			return temp;
+		}
+		else if(val < root->info) 
+			root->left = delete_node(root->left, val);
+		else
+			root->right = delete_node(root->right, val);
+	}
+	return root;
+}
+
+int main(void) {
+	int val, n, i;
+	Node * root = NULL;
+	printf("Enter the number of values to be inserted: ");
+	scanf("%d", &n);
+	printf("Enter %d values:\n", n);
+	for(i = 0; i < n; i++) {
+		scanf("%d", &val);
+		root = insert(root, val);
+	}
+	printf("Nodes before deletion:\n");
+	inorder(root);
+	printf("Enter node to be deleted: ");
+	scanf("%d", &val);
+	root = delete_node(root, val);
+	printf("Nodes after deletion:\n");
+	inorder(root);
+	return 0;
+}
+
+</pre>
+</code>
+<h3><a id = "exptree">Evaluation of postfix expression using binary tree</a></h3>
+<code>
+<pre>
+    
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;ctype.h&gt;
+#include &lt;math.h&gt;
+#include &lt;string.h&gt;
+
+#define SIZE 100
+
+typedef struct node {
+	int info;
+	struct node *right, *left;
+}Node;
+
+Node * stack[SIZE];
+int top = 0;
+
+int main(void) {
+	void push(Node * temp);
+	Node * pop(void);
+	double eval(Node *);
+	Node * create(char * s);
+	void inorder(Node * root);
+	char postfix[SIZE];
+	double ans;
+	Node * root;
+	
+	fgets(postfix, SIZE, stdin);
+	postfix[strlen(postfix) - 1] = '\0';
+	root = create(postfix);
+	ans = eval(root);
+	printf("Infix expression: \n");
+	inorder(root);
+	printf("\nAnswer = %f\n", ans);
+	return 0;
+}
+
+void inorder(Node * root) {
+	if(root != NULL) {
+		inorder(root->left);
+		printf("%c ", root->info);
+		inorder(root->right);
+	}
+}
+
+void push(Node * temp) {
+	stack[top++] = temp;
+}
+
+Node * pop(void) {
+	if(top == 0) {
+		printf("Underflow!\n");
+		exit(1);
+	}
+	else 
+		return stack[--top];
+}
+
+
+Node * create(char * s) {
+	Node * new_node = NULL;
+	while(*s) {
+		if(isalpha(*s)) {
+			new_node = (Node *)malloc(sizeof(Node));
+			new_node->info = *s;
+			new_node->right = new_node->left = NULL;
+			push(new_node);
+		}
+		else {
+			new_node = (Node *)malloc(sizeof(Node));
+			new_node->info = *s;
+			new_node->right = pop();
+			new_node->left = pop();
+			push(new_node);
+		}
+		s++;
+	}
+	if(top) 	// if stack not empty (some input was given)
+		new_node = pop();
+	return new_node;
+}
+
+double eval(Node * root) {
+	int val;
+	if(isdigit(root->info)) 
+		return root->info - '0';
+	else if(isalpha(root->info)) {
+		printf("Enter value of %c\n", root->info);
+		scanf("%d", &val);
+		return val;
+	}
+	else {
+		switch(root->info) {
+			case '+': return eval(root->left) + eval(root->right); break;
+			case '-': return eval(root->left) - eval(root->right); break;
+			case '*': return eval(root->left) * eval(root->right); break;
+			case '/': return eval(root->left) / eval(root->right); break;
+			case '^': return pow(eval(root->left), eval(root->right)); break;
+			default: printf("Invalid symbol/operator!\n"); exit(2);
+		}
+	}
+}
+
+</pre>
+</code>
+
+<a href="#top" accesskey="v">[top]</a>
+</body>
+</html>
